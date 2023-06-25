@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "main": "esno src/index.ts"
   },
   "keywords": [],
   "author": "calandnong",
@@ -15,5 +15,10 @@
     "inquirer": "^9.2.7",
     "minimist": "^1.2.8",
     "picocolors": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/inquirer": "^9.0.3",
+    "@types/fs-extra": "^11.0.1",
+    "esno": "^0.16.3"
   }
 }
