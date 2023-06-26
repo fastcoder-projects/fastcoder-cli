@@ -21,7 +21,9 @@ const DIST_ROOT_PATH = resolve(__dirname, '../dist');
 const commonPlugins: Plugin[] = [];
 
 // 处理ts
-commonPlugins.push(esbuildPlugin());
+commonPlugins.push(esbuildPlugin({
+  target: 'es2020'
+}));
 
 // 处理commonjs
 commonPlugins.push(commonjs());
@@ -59,7 +61,7 @@ export default defineConfig([
     input: 'src/index.ts',
     output: {
       file: `${DIST_ROOT_PATH}/index.cjs`,
-      format: 'cjs'
+      format: 'cjs',
     },
     external: [
       ...externals,

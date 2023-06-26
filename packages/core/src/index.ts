@@ -20,6 +20,7 @@ import inquirer from 'inquirer';
 import * as path from 'node:path';
 import fs from 'fs-extra';
 import { Logger } from './node/logger';
+import { VERSION, PACKAGE_PATH } from './constant';
 
 function copy(src: string, dest: string) {
   fs.copyFile(src, dest);
@@ -60,14 +61,13 @@ cli
 .option(`-e, --${ConfigFile.ESLINT}`, '直接创建eslint配置')
 .option(`-lt, --${ConfigFile.LINT_STAGED}`, '直接创建lint-staged配置')
 .action(async (_, options: Record<string, string | boolean | string[]>) => {
-  console.log('options', options);
-  logger.warn('注意要生成文件了！');
+  logger.warn('欢迎来到fastcoder，接下来我们可以进行愉快的快速创建项目的通用配置啦！');
   // 选择需要生成的文件
   const { type }: { type: ConfigFile } = await inquirer.prompt([
     {
       type: 'list',
       name: 'type',
-      message: '请选择你需要生成的文件文件',
+      message: '请选择你需要生成的文件',
       choices: [
         {
           name: 'eslint配置文件',
@@ -81,19 +81,21 @@ cli
     }
   ]);
 
-  console.log('EXECUTE_PATH', EXECUTE_PATH);
+  console.log('EXECUTE_PATH', PACKAGE_PATH);
   
 
   if(type === ConfigFile.ESLINT) {
-    copy(path.resolve(EXECUTE_PATH, './templates/.eslintrc.txt'), path.resolve(EXECUTE_PATH, './.eslintrc.js'));
+    copy(path.resolve(PACKAGE_PATH, './templates/.eslintrc.txt'), path.resolve(EXECUTE_PATH, './.eslintrc.js'));
   }
 
   if(type === ConfigFile.LINT_STAGED) {
-    copy(path.resolve(EXECUTE_PATH, './templates/.lintstagedrc.txt'), path.resolve(EXECUTE_PATH, './.lintstagedrc.mjs'));
+    copy(path.resolve(PACKAGE_PATH, './templates/.lintstagedrc.txt'), path.resolve(EXECUTE_PATH, './.lintstagedrc.mjs'));
   }
 
   logger.success('创建成功！');
 });
+
+cli.version(VERSION);
 
 cli.help();
 
