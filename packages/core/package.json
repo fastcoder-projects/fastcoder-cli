@@ -1,15 +1,51 @@
 {
-  "name": "@fastcoder/cli-core",
+  "name": "@fastcoder/cli",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "main": "esno src/index.ts"
-  },
-  "keywords": [],
+  "homepage": "https://github.com/fastcoder-projects/fastcoder-cli#readme",
   "author": "calandnong",
   "license": "MIT",
+  "description": "fast cli",
+  "keywords": [],
+  "scripts": {
+    "fastcoder": "tsx src/index.ts",
+    "build": "tsx ./scripts/build.ts",
+    "build:rollup": "rollup -c"
+  },
+  "bin": {
+    "fastcoder": "bin/cli.js"
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json",
+    "./*": "./*"
+  },
+  "files": [
+    "dist",
+    "bin"
+  ],
+  "engines": {
+    "node": "^14.18.0 || >=16.0.0"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fastcoder-projects/fastcoder-cli.git",
+    "directory": "packages/vite"
+  },
+  "bugs": {
+    "url": "https://github.com/fastcoder-projects/fastcoder-cli/issues"
+  },
   "dependencies": {
+    "@antfu/ni": "^0.21.4",
     "cac": "^6.7.14",
     "fs-extra": "^11.1.1",
     "inquirer": "^9.2.7",
@@ -17,8 +53,17 @@
     "picocolors": "^1.0.0"
   },
   "devDependencies": {
-    "@types/inquirer": "^9.0.3",
+    "@rollup/plugin-commonjs": "^25.0.2",
+    "@rollup/plugin-node-resolve": "^15.1.0",
     "@types/fs-extra": "^11.0.1",
-    "esno": "^0.16.3"
+    "@types/inquirer": "^9.0.3",
+    "consola": "^3.1.0",
+    "esbuild": "^0.18.9",
+    "esbuild-register": "^3.4.2",
+    "rollup": "^3.25.2",
+    "rollup-plugin-dts": "^5.3.0",
+    "rollup-plugin-esbuild": "^5.0.0",
+    "tsx": "^3.12.7",
+    "typescript": "^5.1.3"
   }
 }
