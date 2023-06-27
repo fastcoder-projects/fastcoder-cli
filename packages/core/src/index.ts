@@ -15,12 +15,13 @@
 // debug：debug 是一个模仿 Node.js 核心调试技术的小型 JavaScript 调试程序，在适用于 Node.js 和 Web 浏览器 都可使用；debug 只在 vite 工具源码中有使用；说直白点就是你可以使用 debug 来对你的程序进行 毫秒级别时间差的统计 对你程序代码进行优化；
 // picocolors：在终端
 
+import * as path from 'node:path';
 import cac from 'cac';
 import inquirer from 'inquirer';
-import * as path from 'node:path';
 import fs from 'fs-extra';
+import shell from 'shelljs';
 import { Logger } from './node/logger';
-import { VERSION, PACKAGE_PATH } from './constant';
+import { VERSION, PACKAGE_PATH, EXEC_PATH } from './constant';
 
 function copy(src: string, dest: string) {
   fs.copyFile(src, dest);
@@ -28,9 +29,7 @@ function copy(src: string, dest: string) {
 
 const EXECUTE_PATH = process.cwd();
 
-
 const logger = new Logger();
-
 
 const cli = cac('fastcoder');
 
@@ -45,7 +44,7 @@ export enum ConfigFile {
   /**
    * lint-staged配置文件
    */
-  LINT_STAGED = 'lint-staged'
+  LINT_STAGED = 'lint-staged',
 }
 
 // interface CreateOptions {
@@ -56,44 +55,54 @@ export enum ConfigFile {
 // }
 
 cli
-.command('', '支持创建eslint配置文件、lint-staged配置文件等')
-.alias('create')
-.option(`-e, --${ConfigFile.ESLINT}`, '直接创建eslint配置')
-.option(`-lt, --${ConfigFile.LINT_STAGED}`, '直接创建lint-staged配置')
-.action(async (_, options: Record<string, string | boolean | string[]>) => {
-  logger.warn('欢迎来到fastcoder，接下来我们可以进行愉快的快速创建项目的通用配置啦！');
-  // 选择需要生成的文件
-  const { type }: { type: ConfigFile } = await inquirer.prompt([
-    {
-      type: 'list',
-      name: 'type',
-      message: '请选择你需要生成的文件',
-      choices: [
-        {
-          name: 'eslint配置文件',
-          value: ConfigFile.ESLINT
-        },
-        {
-          name: 'lint-staged配置文件',
-          value: ConfigFile.LINT_STAGED
-        }
-      ]
+  .command('', '支持创建eslint配置文件、lint-staged配置文件等')
+  .alias('create')
+  .option(`-e, --${ConfigFile.ESLINT}`, '直接创建eslint配置')
+  .option(`-lt, --${ConfigFile.LINT_STAGED}`, '直接创建lint-staged配置')
+  .action(async () => {
+    logger.warn('欢迎来到fastcoder，接下来我们可以进行愉快的快速创建项目的通用配置啦！');
+    // 选择需要生成的文件
+    const { type }: { type: ConfigFile } = await inquirer.prompt([
+      {
+        type: 'list',
+        name: 'type',
+        message: '请选择你需要生成的文件',
+        choices: [
+          {
+            name: 'eslint配置文件',
+            value: ConfigFile.ESLINT,
+          },
+          {
+            name: 'lint-staged配置文件',
+            value: ConfigFile.LINT_STAGED,
+          },
+        ],
+      },
+    ]);
+
+    console.log('EXECUTE_PATH', PACKAGE_PATH);
+
+    if (type === ConfigFile.ESLINT) {
+      copy(path.resolve(PACKAGE_PATH, './templates/.eslintrc.txt'), path.resolve(EXECUTE_PATH, './.eslintrc.js'));
+      shell
+        // 进入项目的目录
+        .cd(EXEC_PATH)
+        // 执行依赖安装
+        .exec('npx @antfu/ni eslint @fastcoder/eslint-config-ts typescript -w -D');
     }
-  ]);
 
-  console.log('EXECUTE_PATH', PACKAGE_PATH);
-  
+    if (type === ConfigFile.LINT_STAGED) {
+      copy(path.resolve(PACKAGE_PATH, './templates/.lintstagedrc.txt'), path.resolve(EXECUTE_PATH, './.lintstagedrc.mjs'));
+    }
 
-  if(type === ConfigFile.ESLINT) {
-    copy(path.resolve(PACKAGE_PATH, './templates/.eslintrc.txt'), path.resolve(EXECUTE_PATH, './.eslintrc.js'));
-  }
+    logger.success('创建成功！');
+  });
 
-  if(type === ConfigFile.LINT_STAGED) {
-    copy(path.resolve(PACKAGE_PATH, './templates/.lintstagedrc.txt'), path.resolve(EXECUTE_PATH, './.lintstagedrc.mjs'));
-  }
-
-  logger.success('创建成功！');
-});
+cli
+  .command('remove [config]', '移除配置')
+  .action(async () => {
+    // 移除操作
+  });
 
 cli.version(VERSION);
 

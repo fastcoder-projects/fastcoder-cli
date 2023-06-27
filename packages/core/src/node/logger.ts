@@ -26,14 +26,15 @@ export enum LogType {
  * @param opt 输出配置
  */
 function output(type: LogType = LogType.INFO, msg: string, opts?: LogOptions) {
+  console.log(opts);
   let message = colorLog.white(msg);
-  if(type === LogType.WARN) {
+  if (type === LogType.WARN) {
     message = colorLog.yellow(msg);
   }
-  if(type === LogType.ERROR) {
+  if (type === LogType.ERROR) {
     message = colorLog.red(msg);
   }
-  if(type === LogType.SUCCESS) {
+  if (type === LogType.SUCCESS) {
     message = colorLog.green(msg);
   }
   console.log(message);
@@ -52,7 +53,7 @@ export class Logger {
   }
 
   warnOnce(msg: string, opts?: LogOptions) {
-    if (warnedMessages.has(msg)) return
+    if (warnedMessages.has(msg)) return;
     output(LogType.WARN, msg, opts);
     warnedMessages.add(msg);
   }
@@ -65,4 +66,3 @@ export class Logger {
     output(LogType.SUCCESS, msg, opts);
   }
 }
-
