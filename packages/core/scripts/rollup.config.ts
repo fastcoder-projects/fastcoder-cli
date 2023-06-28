@@ -1,14 +1,11 @@
 import { resolve } from 'node:path';
-import { RollupOptions, Plugin } from 'rollup';
+import { defineConfig } from 'rollup';
+import type { Plugin } from 'rollup';
 import dts from 'rollup-plugin-dts';
 import esbuildPlugin from 'rollup-plugin-esbuild';
 import NodeResolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import pkg from '../package.json';
-
-function defineConfig(config: RollupOptions | RollupOptions[]) {
-  return config
-}
 
 /**
  * 打包路径
@@ -22,7 +19,7 @@ const commonPlugins: Plugin[] = [];
 
 // 处理ts
 commonPlugins.push(esbuildPlugin({
-  target: 'es2020'
+  target: 'es2020',
 }));
 
 // 处理commonjs
@@ -47,14 +44,14 @@ export default defineConfig([
     input: 'src/index.ts',
     output: {
       file: `${DIST_ROOT_PATH}/index.mjs`,
-      format: 'es'
+      format: 'es',
     },
     external: [
       ...externals,
     ],
     plugins: [
-      ...commonPlugins
-    ]
+      ...commonPlugins,
+    ],
   },
   // cjs
   {
@@ -67,21 +64,21 @@ export default defineConfig([
       ...externals,
     ],
     plugins: [
-      ...commonPlugins
-    ]
+      ...commonPlugins,
+    ],
   },
   // d.ts
   {
     input: 'src/index.ts',
     output: {
       file: `${DIST_ROOT_PATH}/index.d.ts`,
-      format: 'es'
+      format: 'es',
     },
     external: [
       ...externals,
     ],
     plugins: [
       dts(),
-    ]
-  }
-])
+    ],
+  },
+]);
